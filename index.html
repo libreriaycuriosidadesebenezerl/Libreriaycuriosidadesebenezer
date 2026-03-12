@@ -1132,31 +1132,18 @@ function renderCart(){
   }).join("");
   const total=cart.reduce((s,ci)=>{const p=products.find(x=>x.id===ci.id);return s+(p?getPrecioProducto(p)*ci.qty:0);},0);
   const totalPub=cart.reduce((s,ci)=>{const p=products.find(x=>x.id===ci.id);return s+(p?p.price*ci.qty:0);},0);
-  const calcTotalT=(tipo)=>cart.reduce((s,ci)=>{const p=products.find(x=>x.id===ci.id);if(!p)return s;let pu=p.price;if(tipo==="media_docena"&&p.precio_media_docena>0)pu=p.precio_media_docena;else if(tipo==="docena"&&p.precio_docena>0)pu=p.precio_docena;else if(tipo==="fardo"&&p.precio_fardo>0)pu=p.precio_fardo;return s+pu*ci.qty;},0);
-  const totalMD=calcTotalT("media_docena"), totalDOC=calcTotalT("docena"), totalFARDO=calcTotalT("fardo");
   const allLabels={...PRECIO_TIPOS,...MAYOREO_SUB_TIPOS};
   const tipoActual=mayoreoTipo||"publico";
   const tipoLabel=allLabels[tipoActual]?.label||"Público";
   const tipoIcon=allLabels[tipoActual]?.icon||"🛒";
   const esMayoreo=mayoreoMode&&tipoActual!=="publico";
-  // Construir bloque de todos los totales
-  const mkRow=(ico,lbl,val,activo)=>"<div style='display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0.7rem;border-radius:8px;margin-bottom:0.3rem;"+(activo?"background:"+(lbl.includes("Público")?"#e0f4ff":"var(--orange-soft)"):"")+";border:1.5px solid "+(activo?(lbl.includes("Público")?"var(--accent)":"var(--orange)"):"transparent")+"'>"+
-    "<span style='font-size:0.82rem;font-weight:700;color:"+(activo?(lbl.includes("Público")?"var(--accent2)":"#92400e"):"var(--text-muted)")+"'>"+ico+" "+lbl+"</span>"+
-    "<span style='font-weight:800;font-size:0.95rem;color:"+(activo?(lbl.includes("Público")?"var(--accent)":"var(--orange)"):"var(--dark)")+"'>Q"+val.toFixed(2)+"</span></div>";
-  const totalesBlock="<div style='background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:0.8rem;margin-bottom:1.2rem'>"+
-    "<div style='font-size:0.75rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.6rem'>Todos los precios</div>"+
-    mkRow("🛒","Público",totalPub,tipoActual==="publico")+
-    mkRow("💵","½ DOC",totalMD,tipoActual==="media_docena")+
-    mkRow("💵","DOC",totalDOC,tipoActual==="docena")+
-    mkRow("🎁","FARDO",totalFARDO,tipoActual==="fardo")+
-  "</div>";
   sumEl.innerHTML="<div class='cart-summary'>"+
-    "<div style='color:var(--text-muted);font-size:0.9rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.3rem'>"+
+    "<div style='color:var(--text-muted);font-size:0.9rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;'>"+
       "Total "+tipoLabel+
-      (esMayoreo?"<span style='margin-left:0.5rem;background:var(--orange);color:#fff;border-radius:100px;padding:0.15rem 0.6rem;font-size:0.8rem;'>"+tipoIcon+" "+tipoLabel+"</span>":"")+
+      (esMayoreo?"<span class='mayoreo-badge'>"+tipoIcon+" "+tipoLabel+"</span>":"")+
     "</div>"+
+    (esMayoreo&&total<totalPub?"<div style='font-size:0.95rem;color:var(--text-muted);text-decoration:line-through'>Q"+totalPub.toFixed(2)+" normal</div>":"")+
     "<div class='cart-total' style='"+(esMayoreo?"color:var(--orange)":"")+"'>Q"+total.toFixed(2)+"</div>"+
-    totalesBlock+
     "<div style='background:var(--orange-soft);border:1px solid rgba(245,158,11,0.3);border-radius:var(--radius-md);padding:1.2rem;margin-top:1.5rem'>"+
       "<div style='font-size:0.85rem;font-weight:800;color:#92400e;margin-bottom:1rem;text-transform:uppercase;letter-spacing:0.5px;'>Tipo de Cliente</div>"+
       "<div id='mayoreoTipoButtons' style='display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:0.6rem'></div>"+
@@ -1225,15 +1212,6 @@ function updateCheckoutTotal(){
   if(subtotal>=threshold){freeBadge.style.display="block";shipDisplay.textContent="¡Envío gratis aplicado!";}
   else{shipping=(dept&&mun)?getShippingCost(dept,mun):(storeSettings.defaultShipping??25);freeBadge.style.display="none";shipDisplay.textContent="Costo de envío estimado: Q"+shipping.toFixed(2);}
   const total=subtotal+shipping;
-  const allLabels2={...PRECIO_TIPOS,...MAYOREO_SUB_TIPOS};
-  const tipoActual2=mayoreoTipo||"publico";
-  const calcTotalT2=(tipo)=>cart.reduce((s,ci)=>{const p=products.find(x=>x.id===ci.id);if(!p)return s;let pu=p.price;if(tipo==="media_docena"&&p.precio_media_docena>0)pu=p.precio_media_docena;else if(tipo==="docena"&&p.precio_docena>0)pu=p.precio_docena;else if(tipo==="fardo"&&p.precio_fardo>0)pu=p.precio_fardo;return s+pu*ci.qty;},0);
-  const tPub=cart.reduce((s,ci)=>{const p=products.find(x=>x.id===ci.id);return s+(p?p.price*ci.qty:0);},0)+shipping;
-  const tMD=calcTotalT2("media_docena")+shipping, tDOC=calcTotalT2("docena")+shipping, tFARDO=calcTotalT2("fardo")+shipping;
-  const mkCR2=(ico,lbl,val,activo)=>"<div style='display:flex;justify-content:space-between;align-items:center;padding:0.4rem 0.7rem;border-radius:8px;margin-top:0.3rem;"+(activo?"background:"+(lbl.includes('Público')?"#e0f4ff":"var(--orange-soft)"):"")+"'>"+"<span style='font-size:0.85rem;font-weight:700;color:"+(activo?(lbl.includes('Público')?"var(--accent2)":"#92400e"):"var(--text-muted)")+"'>"+ico+" "+lbl+"</span>"+"<span style='font-weight:800;font-size:0.95rem;color:"+(activo?(lbl.includes('Público')?"var(--accent)":"var(--orange)"):"var(--dark)")+"'>"+"Q"+val.toFixed(2)+"</span></div>";
-  let allTotalesEl=document.getElementById("checkoutAllTotales");
-  if(!allTotalesEl){const ins=document.createElement("div");ins.id="checkoutAllTotales";const ref2=document.getElementById("checkoutTotal");if(ref2&&ref2.parentElement)ref2.parentElement.insertAdjacentElement("afterend",ins);allTotalesEl=ins;}
-  if(allTotalesEl)allTotalesEl.innerHTML="<div style='border-top:1px dashed var(--border);margin-top:0.8rem;padding-top:0.8rem'>"+"<div style='font-size:0.78rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.3rem'>Ver todos los precios</div>"+mkCR2("🛒","Público",tPub,tipoActual2==="publico")+mkCR2("💵","½ DOC",tMD,tipoActual2==="media_docena")+mkCR2("💵","DOC",tDOC,tipoActual2==="docena")+mkCR2("🎁","FARDO",tFARDO,tipoActual2==="fardo")+"</div>";
   const el=document.getElementById("checkoutTotal"); if(el)el.textContent="Q"+total.toFixed(2);
   return{subtotal,shipping,total};
 }
@@ -1699,71 +1677,10 @@ function openQuote(){
   const tipoActual=mayoreoTipo||"publico";
   const tipoLabel=allLabels[tipoActual]?.label||"Público";
   const esMayoreo=mayoreoMode&&tipoActual!=="publico";
-
-  // Calcular total público siempre
-  const totalPub=cart.reduce((s,ci)=>{const p=products.find(x=>x.id===ci.id);return s+(p?p.price*ci.qty:0);},0);
-
-  // Calcular total según tipo seleccionado
-  const totalSel=cart.reduce((s,ci)=>{const p=products.find(x=>x.id===ci.id);return s+(p?getPrecioProducto(p)*ci.qty:0);},0);
-
-  // Calcular totales de los 3 tipos mayoristas para mostrar todos
-  const calcTotalTipo=(tipo)=>cart.reduce((s,ci)=>{
-    const p=products.find(x=>x.id===ci.id);if(!p)return s;
-    let pu=p.price;
-    if(tipo==="media_docena"&&p.precio_media_docena>0) pu=p.precio_media_docena;
-    else if(tipo==="docena"&&p.precio_docena>0) pu=p.precio_docena;
-    else if(tipo==="fardo"&&p.precio_fardo>0) pu=p.precio_fardo;
-    return s+pu*ci.qty;
-  },0);
-
-  const totalMediaDoc=calcTotalTipo("media_docena");
-  const totalDocena=calcTotalTipo("docena");
-  const totalFardo=calcTotalTipo("fardo");
-
-  // Filas de productos con precio según tipo seleccionado
-  let rows=cart.map(ci=>{
-    const p=products.find(x=>x.id===ci.id);if(!p)return"";
-    const pu=getPrecioProducto(p);
-    return "<tr><td>"+(p.sku||"—")+"</td><td>"+p.name+"</td><td>"+ci.qty+"</td><td>Q"+pu.toFixed(2)+"</td><td>Q"+(pu*ci.qty).toFixed(2)+"</td></tr>";
-  }).join("");
-
+  const total=cart.reduce((s,ci)=>{const p=products.find(x=>x.id===ci.id);return s+(p?getPrecioProducto(p)*ci.qty:0);},0);
+  let rows=cart.map(ci=>{const p=products.find(x=>x.id===ci.id);if(!p)return"";const pu=getPrecioProducto(p);return"<tr><td>"+(p.sku||"—")+"</td><td>"+p.name+"</td><td>"+ci.qty+"</td><td>Q"+pu.toFixed(2)+"</td><td>Q"+(pu*ci.qty).toFixed(2)+"</td></tr>";}).join("");
   let html="<table class='quote-table'><thead><tr><th>SKU</th><th>Producto</th><th>Cant.</th><th>P.Unit ("+tipoLabel+")</th><th>Subtotal</th></tr></thead><tbody>"+rows+"</tbody></table>";
-
-  // Sección de totales: siempre mostrar todos los precios disponibles
-  html+="<div style='margin-top:1.2rem;border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden'>";
-  html+="<div style='background:var(--bg);padding:0.6rem 1rem;font-size:0.8rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px'>Totales</div>";
-
-  // TOTAL PÚBLICO (siempre)
-  const pubActivo=(tipoActual==="publico");
-  html+="<div style='display:flex;justify-content:space-between;align-items:center;padding:0.7rem 1rem;border-top:1px solid var(--border);background:"+(pubActivo?"#eef9ff":"var(--surface)")+"'>";
-  html+="<span style='font-weight:700;color:var(--dark);font-size:0.95rem'>🛒 TOTAL Público"+(pubActivo?" <span style='background:var(--accent);color:#fff;border-radius:100px;padding:0.1rem 0.5rem;font-size:0.72rem;margin-left:0.4rem'>Seleccionado</span>":"")+"</span>";
-  html+="<strong style='font-size:1.1rem;color:"+(pubActivo?"var(--accent)":"var(--dark)")+"'>Q"+totalPub.toFixed(2)+"</strong></div>";
-
-  // TOTAL ½ DOC
-  const mdActivo=(tipoActual==="media_docena");
-  html+="<div style='display:flex;justify-content:space-between;align-items:center;padding:0.7rem 1rem;border-top:1px solid var(--border);background:"+(mdActivo?"#fff8ee":"var(--surface)")+"'>";
-  html+="<span style='font-weight:700;color:#92400e;font-size:0.95rem'>💵 TOTAL ½ DOC"+(mdActivo?" <span style='background:var(--orange);color:#fff;border-radius:100px;padding:0.1rem 0.5rem;font-size:0.72rem;margin-left:0.4rem'>Seleccionado</span>":"")+"</span>";
-  html+="<strong style='font-size:1.1rem;color:"+(mdActivo?"var(--orange)":"var(--dark)")+"'>Q"+totalMediaDoc.toFixed(2)+"</strong></div>";
-
-  // TOTAL DOC
-  const docActivo=(tipoActual==="docena");
-  html+="<div style='display:flex;justify-content:space-between;align-items:center;padding:0.7rem 1rem;border-top:1px solid var(--border);background:"+(docActivo?"#fff8ee":"var(--surface)")+"'>";
-  html+="<span style='font-weight:700;color:#92400e;font-size:0.95rem'>💵 TOTAL DOC"+(docActivo?" <span style='background:var(--orange);color:#fff;border-radius:100px;padding:0.1rem 0.5rem;font-size:0.72rem;margin-left:0.4rem'>Seleccionado</span>":"")+"</span>";
-  html+="<strong style='font-size:1.1rem;color:"+(docActivo?"var(--orange)":"var(--dark)")+"'>Q"+totalDocena.toFixed(2)+"</strong></div>";
-
-  // TOTAL FARDO
-  const fardoActivo=(tipoActual==="fardo");
-  html+="<div style='display:flex;justify-content:space-between;align-items:center;padding:0.7rem 1rem;border-top:1px solid var(--border);background:"+(fardoActivo?"#fff8ee":"var(--surface)")+"'>";
-  html+="<span style='font-weight:700;color:#92400e;font-size:0.95rem'>🎁 TOTAL FARDO"+(fardoActivo?" <span style='background:var(--orange);color:#fff;border-radius:100px;padding:0.1rem 0.5rem;font-size:0.72rem;margin-left:0.4rem'>Seleccionado</span>":"")+"</span>";
-  html+="<strong style='font-size:1.1rem;color:"+(fardoActivo?"var(--orange)":"var(--dark)")+"'>Q"+totalFardo.toFixed(2)+"</strong></div>";
-
-  // Resaltado total efectivo
-  html+="<div style='display:flex;justify-content:space-between;align-items:center;padding:0.9rem 1rem;border-top:2px solid "+(esMayoreo?"var(--orange)":"var(--accent)")+";"
-       +"background:"+(esMayoreo?"var(--orange-soft)":"#e0f4ff")+"'>";
-  html+="<strong style='font-size:1rem;color:"+(esMayoreo?"#92400e":"var(--accent2))}")+"'>✅ TOTAL A COBRAR ("+tipoLabel+"):</strong>";
-  html+="<strong style='font-size:1.4rem;color:"+(esMayoreo?"var(--orange)":"var(--accent)")+"'>Q"+totalSel.toFixed(2)+"</strong></div>";
-  html+="</div>";
-
+  html+="<table class='quote-table' style='margin-top:1rem'><tbody><tr class='quote-total-row'><td colspan='4' style='text-align:right'>TOTAL ("+tipoLabel+"):</td><td style='color:"+(esMayoreo?"var(--orange)":"var(--accent)")+"'>Q"+total.toFixed(2)+"</td></tr></tbody></table>";
   document.getElementById("quoteBody").innerHTML=html;
   document.getElementById("quoteModal").classList.add("open");
 }
@@ -1773,26 +1690,12 @@ function shareQuoteWhatsApp(){
   const allLabels={...PRECIO_TIPOS,...MAYOREO_SUB_TIPOS};
   const tipoActual=mayoreoTipo||"publico";
   const tipoLabel=allLabels[tipoActual]?.label||"Público";
-  let msg="Cotización - "+name+"\n"+new Date().toLocaleDateString("es-GT")+"\n";
+  let msg="Cotización - "+name+"\n"+new Date().toLocaleDateString("es-GT")+"\nPrecios: "+tipoLabel+"\n";
   const client=document.getElementById("quoteClient").value; if(client) msg+="Cliente: "+client+"\n";
-  msg+="\nProductos:\n";
+  msg+="\n";
   cart.forEach(ci=>{const p=products.find(x=>x.id===ci.id);if(!p)return;const pu=getPrecioProducto(p);msg+="- "+p.name+" x"+ci.qty+" = Q"+(pu*ci.qty).toFixed(2)+"\n";});
-  const calcTotalTipo=(tipo)=>cart.reduce((s,ci)=>{
-    const p=products.find(x=>x.id===ci.id);if(!p)return s;
-    let pu=p.price;
-    if(tipo==="media_docena"&&p.precio_media_docena>0) pu=p.precio_media_docena;
-    else if(tipo==="docena"&&p.precio_docena>0) pu=p.precio_docena;
-    else if(tipo==="fardo"&&p.precio_fardo>0) pu=p.precio_fardo;
-    return s+pu*ci.qty;
-  },0);
-  const totalPub=cart.reduce((s,ci)=>{const p=products.find(x=>x.id===ci.id);return s+(p?p.price*ci.qty:0);},0);
-  const totalSel=cart.reduce((s,ci)=>{const p=products.find(x=>x.id===ci.id);return s+(p?getPrecioProducto(p)*ci.qty:0);},0);
-  msg+="\nTOTALES:\n";
-  msg+="Publico: Q"+totalPub.toFixed(2)+"\n";
-  msg+="1/2 DOC: Q"+calcTotalTipo("media_docena").toFixed(2)+"\n";
-  msg+="DOC: Q"+calcTotalTipo("docena").toFixed(2)+"\n";
-  msg+="FARDO: Q"+calcTotalTipo("fardo").toFixed(2)+"\n";
-  msg+="\nTOTAL A COBRAR ("+tipoLabel+"): Q"+totalSel.toFixed(2);
+  const total=cart.reduce((s,ci)=>{const p=products.find(x=>x.id===ci.id);return s+(p?getPrecioProducto(p)*ci.qty:0);},0);
+  msg+="\nTOTAL ("+tipoLabel+"): Q"+total.toFixed(2);
   window.open("https://wa.me/"+(wa||"")+"?text="+encodeURIComponent(msg),"_blank");
 }
 
