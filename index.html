@@ -698,6 +698,18 @@ h1, h2, h3, h4, .section-title, .nav-logo { font-family: "Crimson Pro", serif; }
         </div>
       </div>
 
+      <!-- Recoger en tienda -->
+      <div style="border:2px solid rgba(2,136,209,0.25);border-radius:var(--radius-md);padding:1.2rem;margin-bottom:1.5rem;background:#f0f8ff">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.8rem">
+          <span style="font-weight:700;font-size:1rem">🏪 Recoger en tienda física</span>
+          <span style="font-size:0.78rem;background:var(--green-soft);color:#065f46;padding:0.2rem 0.6rem;border-radius:100px;font-weight:700">Siempre activo · Envío gratis</span>
+        </div>
+        <div class="form-group" style="margin:0">
+          <label style="font-size:0.82rem">Dirección / instrucciones para el cliente</label>
+          <textarea id="pmPickupInfo" rows="2" placeholder="Ej: Zona 1, 5a Calle 12-34, lunes a sábado 9am-6pm." oninput="savePaymentMethods()" style="font-size:0.9rem"></textarea>
+        </div>
+      </div>
+
       <div style="background:var(--green-soft);border:1px solid rgba(16,185,129,0.3);border-radius:var(--radius-sm);padding:1rem;font-size:0.85rem;color:#065f46;line-height:1.5">
         ✅ Los cambios se guardan automáticamente. Los métodos activos aparecerán en el formulario de compra del cliente.
       </div>
@@ -962,6 +974,7 @@ function applyStoreSettings(){
   if(si2("pmCodOn")){si2("pmCodOn").checked=pm.cod?.on||false; si2("pmCodInfo").value=pm.cod?.info||"";}
   if(si2("pmTransOn")){si2("pmTransOn").checked=pm.trans?.on||false; si2("pmTransInfo").value=pm.trans?.info||"";}
   if(si2("pmDepOn")){si2("pmDepOn").checked=pm.dep?.on||false; si2("pmDepInfo").value=pm.dep?.info||"";}
+  if(si2("pmPickupInfo"))si2("pmPickupInfo").value=pm.pickupInfo||"Pasa a recoger directamente en nuestra tienda física.";
 }
 
 function populateDeptSelects(){
@@ -1195,6 +1208,11 @@ function openCheckout(){
   div.innerHTML=cart.map(ci=>{const p=products.find(x=>x.id===ci.id);if(!p)return"";const pu=getPrecioProducto(p);return"<div class='checkout-item-row'><span>"+p.name+" <strong>x"+ci.qty+"</strong></span><span>Q"+(pu*ci.qty).toFixed(2)+"</span></div>";}).join("");
   updateCheckoutTotal();
   document.getElementById("buyerPayment").value="";
+  // Asegurar que los campos de dirección estén visibles al abrir
+  ["buyerDept","buyerMun","buyerAddress"].forEach(id=>{
+    const g=document.getElementById(id)?.closest(".form-group");
+    if(g) g.style.display="";
+  });
   renderPaymentButtons();
   document.getElementById("checkoutModal").classList.add("open");
 }
@@ -1208,9 +1226,21 @@ function updateCheckoutTotal(){
   const dept=document.getElementById("buyerDept")?.value||"", mun=document.getElementById("buyerMun")?.value||"";
   const threshold=storeSettings.freeShippingAt??300;
   const freeBadge=document.getElementById("freeShippingBadge"), shipDisplay=document.getElementById("shippingCostDisplay");
+  const isPickup=document.getElementById("buyerPayment")?.value==="pickup";
   let shipping=0;
-  if(subtotal>=threshold){freeBadge.style.display="block";shipDisplay.textContent="¡Envío gratis aplicado!";}
-  else{shipping=(dept&&mun)?getShippingCost(dept,mun):(storeSettings.defaultShipping??25);freeBadge.style.display="none";shipDisplay.textContent="Costo de envío estimado: Q"+shipping.toFixed(2);}
+  if(isPickup){
+    freeBadge.style.display="block";
+    freeBadge.textContent="🏪 Recoger en tienda — ¡Envío gratis!";
+    shipDisplay.textContent="";
+  } else if(subtotal>=threshold){
+    freeBadge.style.display="block";
+    freeBadge.textContent="¡Envío gratis en este pedido!";
+    shipDisplay.textContent="¡Envío gratis aplicado!";
+  } else {
+    shipping=(dept&&mun)?getShippingCost(dept,mun):(storeSettings.defaultShipping??25);
+    freeBadge.style.display="none";
+    shipDisplay.textContent="Costo de envío estimado: Q"+shipping.toFixed(2);
+  }
   const total=subtotal+shipping;
   const el=document.getElementById("checkoutTotal"); if(el)el.textContent="Q"+total.toFixed(2);
   return{subtotal,shipping,total};
@@ -1227,6 +1257,7 @@ function savePaymentMethods(){
   storeSettings.paymentMethods.cod={on:document.getElementById("pmCodOn")?.checked||false,info:document.getElementById("pmCodInfo")?.value||""};
   storeSettings.paymentMethods.trans={on:document.getElementById("pmTransOn")?.checked||false,info:document.getElementById("pmTransInfo")?.value||""};
   storeSettings.paymentMethods.dep={on:document.getElementById("pmDepOn")?.checked||false,info:document.getElementById("pmDepInfo")?.value||""};
+  storeSettings.paymentMethods.pickupInfo=document.getElementById("pmPickupInfo")?.value||"";
   saveSettings();
 }
 function renderPaymentButtons(){
@@ -1234,14 +1265,16 @@ function renderPaymentButtons(){
   const methods=[
     {key:"cod",icon:"🚚",label:"Contra entrega",on:pm.cod?.on,info:pm.cod?.info||""},
     {key:"trans",icon:"🏦",label:"Transferencia",on:pm.trans?.on,info:pm.trans?.info||""},
-    {key:"dep",icon:"💵",label:"Depósito",on:pm.dep?.on,info:pm.dep?.info||""}
+    {key:"dep",icon:"💵",label:"Depósito",on:pm.dep?.on,info:pm.dep?.info||""},
+    {key:"pickup",icon:"🏪",label:"Recoger en tienda",on:true,info:pm.pickupInfo||"Pasa a recoger tu pedido directamente en nuestra tienda física. ¡Sin costo de envío!"}
   ].filter(m=>m.on);
   const wrap=document.getElementById("pmButtons");
   const group=document.getElementById("paymentMethodGroup");
   if(!wrap) return;
   if(!methods.length){group.style.display="none";return;}
   group.style.display="";
-  wrap.style.gridTemplateColumns=methods.length===1?"1fr":methods.length===2?"1fr 1fr":"1fr 1fr 1fr";
+  const cols=methods.length===1?"1fr":methods.length===2?"1fr 1fr":"1fr 1fr";
+  wrap.style.gridTemplateColumns=cols;
   wrap.innerHTML=methods.map(m=>
     `<button type="button" class="pm-btn" id="pmb_${m.key}" onclick="pickPayment('${m.key}','${encodeURIComponent(m.info)}')">`+
     `<span class="pm-icon">${m.icon}</span><span>${m.label}</span></button>`
@@ -1254,8 +1287,18 @@ function pickPayment(key, rawInfo){
   const btn=document.getElementById("pmb_"+key); if(btn) btn.classList.add("active");
   const info=decodeURIComponent(rawInfo);
   const box=document.getElementById("pmInfoBox");
-  if(info.trim()){box.style.display="block";box.innerHTML="<strong style='font-size:0.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:0.4rem'>Instrucciones de pago</strong>"+info.replace(/\n/g,"<br>");}
+  if(info.trim()){box.style.display="block";box.innerHTML="<strong style='font-size:0.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:0.4rem'>"+(key==="pickup"?"📍 Instrucciones":"Instrucciones de pago")+"</strong>"+info.replace(/\n/g,"<br>");}
   else box.style.display="none";
+  // Mostrar/ocultar campos de dirección según método
+  const deptGroup=document.getElementById("buyerDept")?.closest(".form-group");
+  const munGroup=document.getElementById("buyerMun")?.closest(".form-group");
+  const addrGroup=document.getElementById("buyerAddress")?.closest(".form-group");
+  const isPickupSelected=key==="pickup";
+  if(deptGroup) deptGroup.style.display=isPickupSelected?"none":"";
+  if(munGroup) munGroup.style.display=isPickupSelected?"none":"";
+  if(addrGroup) addrGroup.style.display=isPickupSelected?"none":"";
+  // Si es recoger en tienda, actualizar total con envío gratis
+  updateCheckoutTotal();
 }
 
 function placeOrder(){
@@ -1266,16 +1309,16 @@ function placeOrder(){
   const address=document.getElementById("buyerAddress").value.trim();
   const notes=document.getElementById("buyerNotes").value.trim();
   const payment=document.getElementById("buyerPayment").value;
-  if(!name||!contact||!dept||!mun){toast("Completa todos los campos requeridos (*)","error");return;}
+  if(!name||!contact||(payment!=="pickup"&&(!dept||!mun))){toast("Completa todos los campos requeridos (*)","error");return;}
   // validar pago solo si hay métodos activos
   const pm=storeSettings.paymentMethods||{};
-  const anyOn=pm.cod?.on||pm.trans?.on||pm.dep?.on;
+  const anyOn=pm.cod?.on||pm.trans?.on||pm.dep?.on||true; // pickup siempre activo
   if(anyOn&&!payment){toast("Selecciona un método de pago","error");return;}
   const{subtotal,shipping,total}=updateCheckoutTotal();
   const items=cart.map(ci=>{const p=products.find(x=>x.id===ci.id);const pu=p?getPrecioProducto(p):0;return p?{id:p.id,name:p.name,price:pu,qty:ci.qty}:null;}).filter(Boolean);
   items.forEach(it=>{const p=products.find(x=>x.id===it.id);if(p)p.stock=Math.max(0,p.stock-it.qty);});
   saveProducts();
-  const pmLabels={cod:"Contra entrega",trans:"Transferencia bancaria",dep:"Depósito en efectivo"};
+  const pmLabels={cod:"Contra entrega",trans:"Transferencia bancaria",dep:"Depósito en efectivo",pickup:"Recoger en tienda física"};
   const order={id:nextOrderId(),date:new Date().toISOString(),status:"Pendiente",subtotal,shipping,total,payment:payment||null,paymentLabel:pmLabels[payment]||null,customer:{name,contact,dept,mun,address,notes},items,mayoreoTipo:mayoreoTipo||null};
   orders.push(order);
   localStorage.setItem("ee_orders",JSON.stringify(orders));
@@ -1283,7 +1326,7 @@ function placeOrder(){
   const wa=storeSettings.waNumber;
   if(wa){
     const tipoLabel=PRECIO_TIPOS[mayoreoTipo||"publico"]?.label||"Público";
-    let msg="Nuevo Pedido #"+order.id+"\n"+name+" | "+contact+"\n"+dept+", "+mun+(address?" - "+address:"")+"\n";
+    let msg="Nuevo Pedido #"+order.id+"\n"+name+" | "+contact+"\n"+(payment==="pickup"?"🏪 Recoger en tienda física":(dept+", "+mun+(address?" - "+address:"")))+"\n";
     if(mayoreoMode&&mayoreoTipo&&mayoreoTipo!=="publico") msg+="Precio "+tipoLabel+"\n";
     if(payment) msg+="💳 Pago: "+pmLabels[payment]+"\n";
     msg+="\nProductos:\n"; items.forEach(it=>{msg+="- "+it.name+" x"+it.qty+" = Q"+(it.price*it.qty).toFixed(2)+"\n";});
