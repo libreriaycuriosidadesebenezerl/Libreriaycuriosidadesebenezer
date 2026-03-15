@@ -626,13 +626,21 @@ h1, h2, h3, h4, .section-title, .nav-logo { font-family: "Crimson Pro", serif; }
     <div class="settings-card">
       <h4>🏪 Sistema de Precios por Producto</h4>
       <div style="background:var(--green-soft);border:1px solid rgba(16,185,129,0.3);border-radius:var(--radius-sm);padding:1.2rem;color:#065f46;font-size:0.9rem;line-height:1.6">
-        <strong>Cómo agregar precio Mayoristas:</strong><br>
+        <strong>Cómo agregar precios de mayoreo:</strong><br>
+        <strong>Opción 1 — Editar manualmente:</strong><br>
         1. Ve a la pestaña <strong>Inventario</strong> → Editar cualquier producto<br>
-        2. En la sección "Precio Mayoristas" puedes ingresar:<br>
-        &nbsp;&nbsp;• <strong>Precio directo</strong>: ej. <code>5.50</code><br>
-        &nbsp;&nbsp;• <strong>% de descuento</strong>: ej. <code>10%</code> (rebaja 10% del precio público)<br>
-        &nbsp;&nbsp;• <strong>Resta fija</strong>: ej. <code>-2</code> (resta Q2 del precio público)<br>
-        3. Si un producto no tiene precio mayorista, se muestra el precio público.
+        2. En la sección "Precios Mayoreo" ingresa los precios para:<br>
+        &nbsp;&nbsp;• <strong>½ DOC</strong> (media docena)<br>
+        &nbsp;&nbsp;• <strong>DOC</strong> (docena)<br>
+        &nbsp;&nbsp;• <strong>FARDO</strong><br>
+        <br>
+        <strong>Opción 2 — Importar CSV masivo:</strong><br>
+        El CSV debe incluir estas columnas (además de nombre y precio):<br>
+        &nbsp;&nbsp;• <code>precio_media_docena</code> — precio por ½ DOC<br>
+        &nbsp;&nbsp;• <code>precio_docena</code> — precio por DOC<br>
+        &nbsp;&nbsp;• <code>precio_fardo</code> — precio por FARDO<br>
+        <br>
+        💡 Usa <strong>⬇ Exportar CSV</strong> para descargar la plantilla con todas las columnas ya incluidas.
       </div>
     </div>
   </div>
@@ -1768,9 +1776,22 @@ function shareQuoteWhatsApp(){
 // ── EXPORTAR / IMPORTAR INVENTARIO ──────────────────────────────
 function exportInventoryCSV(){
   if(!products.length){toast("No hay productos para exportar","error");return;}
-  var headers=["id","sku","nombre","precio","stock","descripcion","imgUrl","Categoría"];
+  var headers=["id","sku","nombre","precio","stock","descripcion","imgUrl","Categoría","precio_media_docena","precio_docena","precio_fardo","precio_mayoristas"];
   var rows=products.map(function(p){
-    return [p.id,fCSV(p.sku||""),fCSV(p.name||""),p.price||0,p.stock||0,fCSV(p.desc||""),fCSV(p.imgUrl||""),fCSV(p.categoria||"")].join(",");
+    return [
+      p.id,
+      fCSV(p.sku||""),
+      fCSV(p.name||""),
+      p.price||0,
+      p.stock||0,
+      fCSV(p.desc||""),
+      fCSV(p.imgUrl||""),
+      fCSV(p.categoria||""),
+      p.precio_media_docena||0,
+      p.precio_docena||0,
+      p.precio_fardo||0,
+      p.precio_mayoristas||0
+    ].join(",");
   });
   var csv="\uFEFF"+headers.join(",")+"\n"+rows.join("\n");
   var blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});
@@ -1778,7 +1799,7 @@ function exportInventoryCSV(){
   var a=document.createElement("a");
   a.href=url; a.download="inventario_eben-ezer.csv"; a.click();
   URL.revokeObjectURL(url);
-  toast("Inventario exportado","success");
+  toast("Inventario exportado con precios de mayoreo","success");
 }
 
 function fCSV(v){
