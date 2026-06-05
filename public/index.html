@@ -725,6 +725,17 @@ h1, h2, h3, h4, .section-title, .nav-logo { font-family: "Crimson Pro", serif; }
 
 @media print { .navbar, .filters-bar, .add-cart-btn, .cart-summary, .modal-footer, .quote-btn, .checkout-btn, .admin-tabs, .admin-actions, .btn-edit, .btn-del, .pagination-bar { display: none !important; } .modal-overlay { position: static !important; background: none !important; display: block !important; } .modal { box-shadow: none !important; max-height: none !important; } }
 </style>
+  <!-- Favicon (logo pequeño en la pestaña) -->
+  <link rel="icon" type="image/png" href="https://TU-URL-DEL-LOGO.png">
+  <link rel="apple-touch-icon" href="https://TU-URL-DEL-LOGO.png">
+  <!-- Open Graph: imagen que aparece al compartir en WhatsApp -->
+  <meta property="og:title" content="DS Distribuidora San Francisco">
+  <meta property="og:description" content="Temporada de productos - Haz tu pedido aquí">
+  <meta property="og:image" content="https://TU-URL-DEL-LOGO.png">
+  <meta property="og:image:width" content="300">
+  <meta property="og:image:height" content="300">
+  <meta property="og:url" content="https://dsdistribuidorasanfrancisco.vercel.app/">
+  <meta property="og:type" content="website">
 </head>
 <body>
 
@@ -1012,7 +1023,70 @@ h1, h2, h3, h4, .section-title, .nav-logo { font-family: "Crimson Pro", serif; }
         3. Si un producto no tiene precio mayorista, se muestra el precio público.
       </div>
     </div>
-  </div>
+    <div class="settings-card">
+      <h4>🌐 Redes Sociales</h4>
+      <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:1.2rem">Activa cada red social, pega el enlace y opcionalmente una imagen personalizada para el icono. Si no pones imagen, se usará el icono oficial.</p>
+      <div style="display:flex;flex-direction:column;gap:1.2rem" id="socialLinksAdmin">
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.2rem">
+          <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:0.8rem">
+            <input type="checkbox" id="slWaEnabled" style="width:18px;height:18px;accent-color:#25D366;cursor:pointer">
+            <label for="slWaEnabled" style="font-weight:700;font-size:1rem;color:var(--dark);cursor:pointer">📱 WhatsApp</label>
+          </div>
+          <div class="form-group"><label>Número (con código de país, ej: 50299887766)</label><input type="text" id="slWaUrl" placeholder="50299887766"></div>
+          <div class="form-group" style="margin:0"><label>Icono personalizado (URL de imagen) <span style="font-size:0.78rem;color:var(--text-muted)">— opcional</span></label><input type="text" id="slWaIcon" placeholder="https://..."><img id="slWaIconPreview" src="" style="display:none;width:40px;height:40px;border-radius:50%;margin-top:0.5rem;object-fit:cover" onerror="this.style.display='none'"></div>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.2rem">
+          <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:0.8rem">
+            <input type="checkbox" id="slFbEnabled" style="width:18px;height:18px;accent-color:#1877F2;cursor:pointer">
+            <label for="slFbEnabled" style="font-weight:700;font-size:1rem;color:var(--dark);cursor:pointer">📘 Facebook</label>
+          </div>
+          <div class="form-group"><label>URL de tu página de Facebook</label><input type="text" id="slFbUrl" placeholder="https://facebook.com/tupagina"></div>
+          <div class="form-group" style="margin:0"><label>Icono personalizado (URL de imagen) <span style="font-size:0.78rem;color:var(--text-muted)">— opcional</span></label><input type="text" id="slFbIcon" placeholder="https://..."><img id="slFbIconPreview" src="" style="display:none;width:40px;height:40px;border-radius:50%;margin-top:0.5rem;object-fit:cover" onerror="this.style.display='none'"></div>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.2rem">
+          <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:0.8rem">
+            <input type="checkbox" id="slIgEnabled" style="width:18px;height:18px;accent-color:#E1306C;cursor:pointer">
+            <label for="slIgEnabled" style="font-weight:700;font-size:1rem;color:var(--dark);cursor:pointer">📸 Instagram</label>
+          </div>
+          <div class="form-group"><label>URL de tu perfil de Instagram</label><input type="text" id="slIgUrl" placeholder="https://instagram.com/tuusuario"></div>
+          <div class="form-group" style="margin:0"><label>Icono personalizado (URL de imagen) <span style="font-size:0.78rem;color:var(--text-muted)">— opcional</span></label><input type="text" id="slIgIcon" placeholder="https://..."><img id="slIgIconPreview" src="" style="display:none;width:40px;height:40px;border-radius:50%;margin-top:0.5rem;object-fit:cover" onerror="this.style.display='none'"></div>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.2rem">
+          <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:0.8rem">
+            <input type="checkbox" id="slTtEnabled" style="width:18px;height:18px;accent-color:#010101;cursor:pointer">
+            <label for="slTtEnabled" style="font-weight:700;font-size:1rem;color:var(--dark);cursor:pointer">🎵 TikTok</label>
+          </div>
+          <div class="form-group"><label>URL de tu perfil de TikTok</label><input type="text" id="slTtUrl" placeholder="https://tiktok.com/@tuusuario"></div>
+          <div class="form-group" style="margin:0"><label>Icono personalizado (URL de imagen) <span style="font-size:0.78rem;color:var(--text-muted)">— opcional</span></label><input type="text" id="slTtIcon" placeholder="https://..."><img id="slTtIconPreview" src="" style="display:none;width:40px;height:40px;border-radius:50%;margin-top:0.5rem;object-fit:cover" onerror="this.style.display='none'"></div>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.2rem">
+          <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:0.8rem">
+            <input type="checkbox" id="slYtEnabled" style="width:18px;height:18px;accent-color:#FF0000;cursor:pointer">
+            <label for="slYtEnabled" style="font-weight:700;font-size:1rem;color:var(--dark);cursor:pointer">▶️ YouTube</label>
+          </div>
+          <div class="form-group"><label>URL de tu canal de YouTube</label><input type="text" id="slYtUrl" placeholder="https://youtube.com/@tucanal"></div>
+          <div class="form-group" style="margin:0"><label>Icono personalizado (URL de imagen) <span style="font-size:0.78rem;color:var(--text-muted)">— opcional</span></label><input type="text" id="slYtIcon" placeholder="https://..."><img id="slYtIconPreview" src="" style="display:none;width:40px;height:40px;border-radius:50%;margin-top:0.5rem;object-fit:cover" onerror="this.style.display='none'"></div>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.2rem">
+          <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:0.8rem">
+            <input type="checkbox" id="slTwEnabled" style="width:18px;height:18px;accent-color:#000;cursor:pointer">
+            <label for="slTwEnabled" style="font-weight:700;font-size:1rem;color:var(--dark);cursor:pointer">🐦 Twitter / X</label>
+          </div>
+          <div class="form-group"><label>URL de tu perfil de Twitter/X</label><input type="text" id="slTwUrl" placeholder="https://x.com/tuusuario"></div>
+          <div class="form-group" style="margin:0"><label>Icono personalizado (URL de imagen) <span style="font-size:0.78rem;color:var(--text-muted)">— opcional</span></label><input type="text" id="slTwIcon" placeholder="https://..."><img id="slTwIconPreview" src="" style="display:none;width:40px;height:40px;border-radius:50%;margin-top:0.5rem;object-fit:cover" onerror="this.style.display='none'"></div>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.2rem">
+          <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:0.8rem">
+            <input type="checkbox" id="slTgEnabled" style="width:18px;height:18px;accent-color:#2AABEE;cursor:pointer">
+            <label for="slTgEnabled" style="font-weight:700;font-size:1rem;color:var(--dark);cursor:pointer">✈️ Telegram</label>
+          </div>
+          <div class="form-group"><label>URL o usuario de Telegram</label><input type="text" id="slTgUrl" placeholder="https://t.me/tuusuario"></div>
+          <div class="form-group" style="margin:0"><label>Icono personalizado (URL de imagen) <span style="font-size:0.78rem;color:var(--text-muted)">— opcional</span></label><input type="text" id="slTgIcon" placeholder="https://..."><img id="slTgIconPreview" src="" style="display:none;width:40px;height:40px;border-radius:50%;margin-top:0.5rem;object-fit:cover" onerror="this.style.display='none'"></div>
+        </div>
+      </div>
+      <button class="btn btn-save" style="margin-top:1.5rem" onclick="saveSocialLinks()">💾 Guardar Redes Sociales</button>
+    </div>
+  </div><!-- fin panel-store -->
   <div class="admin-panel" id="panel-shipping">
     <div class="settings-card">
       <h4>Costo de Envío por Municipio</h4>
@@ -1214,7 +1288,16 @@ let storeSettings={name:"Librería Y Curiosidades Eben-Ezer",desc:"Tu librería 
     deposit:{enabled:false,label:"Depósito Bancario",icon:"💵",desc:""},
     pickup:{enabled:false,label:"Recoge en Tienda",icon:"🏪",desc:""}
   },
-  pickupStores:[]
+  pickupStores:[],
+  socialLinks:{
+    whatsapp:{enabled:false,url:"",iconUrl:""},
+    facebook:{enabled:false,url:"",iconUrl:""},
+    instagram:{enabled:false,url:"",iconUrl:""},
+    tiktok:{enabled:false,url:"",iconUrl:""},
+    youtube:{enabled:false,url:"",iconUrl:""},
+    twitter:{enabled:false,url:"",iconUrl:""},
+    telegram:{enabled:false,url:"",iconUrl:""}
+  }
 };
 let mayoreoMode=false, mayoreoTipo="";
 // Tipos de precio: publico y mayoristas (con sub-tipos)
@@ -3069,20 +3152,72 @@ function downloadAldeaTemplate(){
 
 
 <!-- Footer derechos reservados -->
-<footer style="
-  width: 100%;
-  text-align: center;
-  padding: 1rem 1rem 1.4rem;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.78rem;
-  color: #000000;
-  border-top: 1px solid var(--border, #e5e7eb);
-  background: var(--surface, #fff);
-  letter-spacing: 0.3px;
-  margin-top: 2rem;
-">
+<footer id="siteFooter" style="width:100%;text-align:center;padding:1.5rem 1rem 2rem;font-family:'Inter',sans-serif;font-size:0.78rem;color:#000;border-top:1px solid var(--border,#e5e7eb);background:var(--surface,#fff);letter-spacing:0.3px;margin-top:2rem;">
+  <div id="socialIconsFooter" style="display:flex;justify-content:center;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1rem"></div>
   © 2026 LIBRERÍA Y CURIOSIDADES EBEN-EZER &nbsp;–&nbsp; Todos Los Derechos Reservados
 </footer>
 
+<script>
+const SOCIAL_DEFAULTS = {
+  whatsapp: { label:"WhatsApp", color:"#25D366", svg:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>' },
+  facebook:  { label:"Facebook",  color:"#1877F2", svg:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>' },
+  instagram: { label:"Instagram", color:"#E1306C", svg:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>' },
+  tiktok:    { label:"TikTok",    color:"#010101", svg:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.31 6.31 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.77a4.85 4.85 0 01-1.01-.08z"/></svg>' },
+  youtube:   { label:"YouTube",   color:"#FF0000", svg:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>' },
+  twitter:   { label:"Twitter/X", color:"#000000", svg:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.213 5.567zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>' },
+  telegram:  { label:"Telegram",  color:"#2AABEE", svg:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>' }
+};
+function renderSocialFooter(){
+  const container=document.getElementById("socialIconsFooter");
+  if(!container)return;
+  const sl=(storeSettings.socialLinks)||{};
+  let html="";
+  Object.keys(SOCIAL_DEFAULTS).forEach(key=>{
+    const item=sl[key]||{};
+    if(!item.enabled)return;
+    const def=SOCIAL_DEFAULTS[key];
+    let href=item.url||"";
+    if(key==="whatsapp"&&href) href="https://wa.me/"+href.replace(/\D/g,"");
+    if(!href)return;
+    const hasIcon=item.iconUrl&&item.iconUrl.trim();
+    const iconContent=hasIcon
+      ?`<img src="${item.iconUrl}" alt="${def.label}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,0.18);display:block">`
+      :`<span style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:${def.color};color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.18)">${def.svg}</span>`;
+    html+=`<a href="${href}" target="_blank" rel="noopener" title="${def.label}" style="display:inline-block;text-decoration:none;transition:transform 0.2s" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">${iconContent}</a>`;
+  });
+  container.innerHTML=html;
+  container.style.display=html?"flex":"none";
+}
+function loadSocialLinksAdmin(){
+  const sl=storeSettings.socialLinks||{};
+  const map={whatsapp:["slWaEnabled","slWaUrl","slWaIcon","slWaIconPreview"],facebook:["slFbEnabled","slFbUrl","slFbIcon","slFbIconPreview"],instagram:["slIgEnabled","slIgUrl","slIgIcon","slIgIconPreview"],tiktok:["slTtEnabled","slTtUrl","slTtIcon","slTtIconPreview"],youtube:["slYtEnabled","slYtUrl","slYtIcon","slYtIconPreview"],twitter:["slTwEnabled","slTwUrl","slTwIcon","slTwIconPreview"],telegram:["slTgEnabled","slTgUrl","slTgIcon","slTgIconPreview"]};
+  Object.entries(map).forEach(([key,[chk,urlId,iconId,prevId]])=>{
+    const item=sl[key]||{};
+    const c=document.getElementById(chk);if(c)c.checked=!!item.enabled;
+    const u=document.getElementById(urlId);if(u)u.value=item.url||"";
+    const ic=document.getElementById(iconId);if(ic){ic.value=item.iconUrl||"";ic.oninput=function(){const p=document.getElementById(prevId);if(p){p.src=this.value;p.style.display=this.value?"block":"none";}};}
+    const p=document.getElementById(prevId);if(p){if(item.iconUrl){p.src=item.iconUrl;p.style.display="block";}else p.style.display="none";}
+  });
+}
+function saveSocialLinks(){
+  if(!storeSettings.socialLinks)storeSettings.socialLinks={};
+  const sl=storeSettings.socialLinks;
+  const map={whatsapp:["slWaEnabled","slWaUrl","slWaIcon"],facebook:["slFbEnabled","slFbUrl","slFbIcon"],instagram:["slIgEnabled","slIgUrl","slIgIcon"],tiktok:["slTtEnabled","slTtUrl","slTtIcon"],youtube:["slYtEnabled","slYtUrl","slYtIcon"],twitter:["slTwEnabled","slTwUrl","slTwIcon"],telegram:["slTgEnabled","slTgUrl","slTgIcon"]};
+  Object.entries(map).forEach(([key,[chk,urlId,iconId]])=>{
+    const enabled=document.getElementById(chk)?.checked||false;
+    const url=document.getElementById(urlId)?.value.trim()||"";
+    const iconUrl=document.getElementById(iconId)?.value.trim()||"";
+    sl[key]={enabled,url,iconUrl};
+  });
+  saveSettings();
+  renderSocialFooter();
+  if(typeof toast==="function")toast("Redes sociales guardadas","success");
+}
+document.addEventListener("DOMContentLoaded",()=>{setTimeout(()=>{renderSocialFooter();},600);});
+const _origApply=window.applyStoreSettings||(()=>{});
+window.applyStoreSettings=function(){if(typeof _origApply==="function")_origApply();renderSocialFooter();};
+const _origSwitch=window.switchAdminTab;
+if(_origSwitch)window.switchAdminTab=function(tab,el){_origSwitch(tab,el);if(tab==="store")setTimeout(loadSocialLinksAdmin,100);};
+</script>
 </body>
 </html>
