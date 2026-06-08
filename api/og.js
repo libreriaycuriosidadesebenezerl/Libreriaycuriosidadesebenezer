@@ -3,7 +3,7 @@
 module.exports = async (req, res) => {
   const slug = (req.query.slug || "").toLowerCase().trim();
 
-  const STORE_NAME = "DS Distribuidora San Francisco No.4";
+  const STORE_NAME = "Librería Y Curiosidades Eben-Ezer";
   const baseUrl = "https://" + req.headers.host;
 
   if (!slug) {
@@ -12,7 +12,7 @@ module.exports = async (req, res) => {
     return;
   }
 
-  const FIREBASE_URL = "https://dsdistribuidorasfc4-default-rtdb.firebaseio.com/products.json";
+  const FIREBASE_URL = "https://libreriaycuriosidadesebe-a0516-default-rtdb.firebaseio.com/products.json";
 
   let ogTitle = STORE_NAME;
   let ogDesc = STORE_NAME;
